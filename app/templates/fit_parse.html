@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <title>fit parse</title>
+    </head>
+    <body>
+        <h1>fit文件解析</h1>
+        <form action="/fit_parse" method="POST" enctype="multipart/form-data">
+            <input type="file" name="fit_name" accept=".fit">
+            <input type="submit" value="解析"><br/>
+            {{ msg }}
+        </form>
+
+         <table border = 1>
+             <h3>文件信息</h3>
+             {% for key, value in fileinfo.items() %}
+                <tr>
+                   <th> {{ key }} </th>
+                   <td> {{ value }} </td>
+                </tr>
+             {% endfor %}
+         </table>
+
+        <table border = 1>
+             <h3>record</h3>
+             {% for key, value in record.items() %}
+                <tr>
+                   <th> {{ key }} </th>
+                   <td> {{ value }} </td>
+                </tr>
+             {% endfor %}
+         </table>
+
+        {{googlemap("simple-map", 30.508111133339, 114.333645243484)}}
+
+    </body>
+</html>

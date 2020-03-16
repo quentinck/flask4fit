@@ -128,3 +128,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 /.idea
+/app/garminexport/user_info.py

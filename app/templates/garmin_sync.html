@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <title>Garmin Sync</title>
+    </head>
+    <body>
+        <h1>点击进行Garmin数据同步！</h1>
+
+        <form action="/garmin_sync" method="POST">
+            <input type="submit" value="数据同步"><br/>
+            同步状态: {{ msg }}
+        </form>
+
+    </body>
+</html>
