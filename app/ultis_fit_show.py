@@ -10,7 +10,8 @@ fit_info_dict = dict()
 fit_activity_dict = dict()
 fit_session_dict = dict()
 fit_lap_list = []
-fit_multi_record_list = []
+fit_multi_record_list = [{'record':'information'}]
+fit_position_list = []
 # 提取用于显示的数据部分
 fit_show_dict = dict()
 fit_msg_type_list = []#fit文件解码后所包含的类型
@@ -89,6 +90,9 @@ def file_info_fit_show(fitfile):
     # 过滤和修正部分数据
     from ultis_fit_time import utc_dt_to_dt
     keyword = 'timestamp'
+    #有可能fit中不包含时区信息
+    if 'time_offset' not in fit_show_en_dict.keys():
+        fit_show_en_dict['time_offset'] = 0;#默认为UTC时间
     if keyword in fit_show_en_dict.keys():
         fit_show_en_dict[keyword] = utc_dt_to_dt(fit_show_en_dict[keyword]
                                     , fit_show_en_dict['time_offset'])
@@ -153,19 +157,25 @@ def session_fit_show(fitfile):
 def record_fit_show(fitfile):
     for fit_message in fitfile.get_messages('record'):
         fit_record_dict = dict()
+        position_dict = dict()
         for field_data in fit_message:
             if field_data.value is not None:
                 # field_name = record_translate(field_data.name)
                 if 'position_lat' in field_data.name:
-                    field_data.value = str(float(field_data.value) * 0.83819 / 10000000)
+                    field_data.value = float(field_data.value) * 0.83819 / 10000000
+                    position_dict['lat'] = field_data.value
                 if 'position_long' in field_data.name:
-                    field_data.value = str(float(field_data.value) * 0.83819 / 10000000)
+                    field_data.value = float(field_data.value) * 0.83819 / 10000000
+                    position_dict['lng'] = field_data.value
                 fit_record_dict[field_data.name] = str(field_data.value)
                 if field_data.units is not None:
                     fit_record_dict[field_data.name] += ' ' + field_data.units
         fit_multi_record_list.append(fit_record_dict)
-    print(fit_multi_record_list)
+        if len(position_dict) > 0:
+            fit_position_list.append(position_dict)
 
+    # print(fit_multi_record_list)
+    print(fit_position_list)
 
 # 计算心率变异性
 def file_hrv_fit_show(fitfile):

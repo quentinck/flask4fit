@@ -1,38 +1,98 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
-    <head>
-        <meta charset="utf-8">
-        <title>fit parse</title>
-    </head>
-    <body>
-        <h1>fit文件解析</h1>
-        <form action="/fit_parse" method="POST" enctype="multipart/form-data">
-            <input type="file" name="fit_name" accept=".fit">
-            <input type="submit" value="解析"><br/>
-            {{ msg }}
-        </form>
+<head>
+    <meta charset="utf-8">
+    <title>fit parse</title>
 
-         <table border = 1>
-             <h3>文件信息</h3>
-             {% for key, value in fileinfo.items() %}
-                <tr>
-                   <th> {{ key }} </th>
-                   <td> {{ value }} </td>
-                </tr>
-             {% endfor %}
-         </table>
+    <style>
+        /* Always set the map height explicitly to define the size of the div
+         * element that contains the map. */
+        #map {
+            height: 100%;
+        }
 
-        <table border = 1>
-             <h3>record</h3>
-             {% for key, value in record.items() %}
-                <tr>
-                   <th> {{ key }} </th>
-                   <td> {{ value }} </td>
-                </tr>
-             {% endfor %}
-         </table>
+        /* Optional: Makes the sample page fill the window. */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+<h1>fit文件解析</h1>
+<form action="/fit_parse" method="POST" enctype="multipart/form-data">
+    <input type="file" name="fit_name" accept=".fit">
+    <input type="submit" value="解析"><br/>
+    {{ msg }}
+</form>
 
-        {{googlemap("simple-map", 30.508111133339, 114.333645243484)}}
+<table border=1>
+    <h3>文件信息</h3>
+    {% for key, value in fileinfo.items() %}
+        <tr>
+            <th> {{ key }} </th>
+            <td> {{ value }} </td>
+        </tr>
+    {% endfor %}
+</table>
 
-    </body>
+<table border=1>
+    <h3>record</h3>
+    {% for key, value in record.items() %}
+        <tr>
+            <th> {{ key }} </th>
+            <td> {{ value }} </td>
+        </tr>
+    {% endfor %}
+</table>
+
+{#        {{googlemap("simple-map", 30.508111133339, 114.333645243484)}}#}
+<div id="map"></div>
+<script>
+
+    // This example creates a 2-pixel-wide red polyline showing the path of
+    // the first trans-Pacific flight between Oakland, CA, and Brisbane,
+    // Australia which was made by Charles Kingsford Smith.
+
+    function initMap() {
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 15,
+            center: {lat: 30.50811, lng: 114.33364},
+            mapTypeId: 'terrain'
+        });
+
+
+        {#json对象转化成数组 #}
+        {#var jsonStr = '[{"lat":"30.5068051495","lng":"114.335731666032"},{"lat":"30.506835240521003","lng":"114.335721356295"},{"lat":"30.506933895484","lng":"114.33570920253999"}]';#}
+        var jsonStr = '{{ postions|safe }}';
+        //  var jsonObj = $.parseJSON(jsonStr);
+        var flightPlanCoordinates = JSON.parse(jsonStr)
+
+        {#  var flightPlanCoordinates = [#}
+        {#    {lat: 30.50811, lng: 114.33364},#}
+        {#    {lat: 30.50813, lng: 114.33365},#}
+        {#    {lat: 30.50813, lng: 114.33875},#}
+        {#    {lat: 30.52813, lng: 114.34385},#}
+        {#    {lat: 30.54813, lng: 114.35395},#}
+        {#    {lat: 30.55813, lng: 114.36405},#}
+        {#    {lat: 30.59813, lng: 114.37415}#}
+        {#];#}
+
+        var flightPath = new google.maps.Polyline({
+            path: flightPlanCoordinates,
+            geodesic: true,
+            strokeColor: '#FF0000',
+            strokeOpacity: 1.0,
+            strokeWeight: 2
+        });
+
+        flightPath.setMap(map);
+    }
+</script>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAi3g5nThnEyzWbyzr9pp6llzv3TXfsXv4&callback=initMap">
+</script>
+
+</body>
 </html>

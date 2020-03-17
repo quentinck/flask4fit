@@ -25,6 +25,11 @@ def file_hrv_fit(fitfile):
                     hrv2_index = index
                     hrv2time = check_time
         index += 1
+    #不包含心率数据
+    if hrv1_index == 0 or hrv2_index == 0:
+        return None
+
+
     hrv_1 = 0
     hrv_2 = 0
     for field_data in records_list[hrv1_index]:
@@ -35,6 +40,7 @@ def file_hrv_fit(fitfile):
             hrv_2 = str(field_data.value)
     # hrv_2 = 105
     # hrv_1 = 100
+
     if hrv_2<hrv_1:
         return 0
     else:
